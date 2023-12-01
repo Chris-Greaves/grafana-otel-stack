@@ -1,0 +1,35 @@
+---
+server:
+  http_listen_port: 3100
+memberlist:
+  join_members:
+    - loki:7946
+schema_config:
+  configs:
+    - from: 2021-08-01
+      store: tsdb
+      object_store: azure
+      schema: v12
+      index:
+        prefix: index_
+        period: 24h
+common:
+  path_prefix: /loki
+  replication_factor: 1
+  storage:
+    azure:
+      container_name: loki
+      endpoint_suffix: azurite:10000
+      account_name: "devstoreaccount1" # Default Azurite storage account
+      account_key: "Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==" # Default azurite sorage key
+  ring:
+    kvstore:
+      store: memberlist
+ruler:
+  storage:
+    type: azure
+    azure:
+      container_name: loki-ruler
+      endpoint_suffix: azurite:10000
+      account_name: "devstoreaccount1" # Default Azurite storage account
+      account_key: "Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==" # Default azurite sorage key
