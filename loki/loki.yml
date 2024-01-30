@@ -20,8 +20,8 @@ common:
     azure:
       container_name: loki
       endpoint_suffix: azurite:10000
-      account_name: "devstoreaccount1" # Default Azurite storage account
-      account_key: "Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==" # Default azurite sorage key
+      account_name: {{ env "AZURE_STORAGE_ACCOUNT"}}
+      account_key: {{ env "AZURE_STORAGE_KEY" }}
   ring:
     kvstore:
       store: memberlist
@@ -31,5 +31,5 @@ ruler:
     azure:
       container_name: loki-ruler
       endpoint_suffix: azurite:10000
-      account_name: "devstoreaccount1" # Default Azurite storage account
-      account_key: "Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==" # Default azurite sorage key
+      account_name: {{ env "AZURE_STORAGE_ACCOUNT"}}
+      account_key: {{ env "AZURE_STORAGE_KEY" }}
