@@ -1,0 +1,41 @@
+---
+auth_enabled: false
+server:
+  http_listen_port: 3100
+memberlist:
+  join_members:
+  {{- if eq .Env.DEPLOYMENT_MODE "simple" }}
+    - loki-write:7946
+    - loki-read:7946
+    - loki-backend:7946
+  {{- else }}
+    - loki:7946
+  {{- end }}
+schema_config:
+  configs:
+    - from: 2021-08-01
+      store: tsdb
+      object_store: azure
+      schema: v12
+      index:
+        prefix: index_
+        period: 24h
+common:
+  path_prefix: /loki
+  replication_factor: 1
+  storage:
+    azure:
+      container_name: loki
+      endpoint_suffix: azurite:10000
+      account_name: {{ env "AZURE_STORAGE_ACCOUNT"}}
+      account_key: {{ env "AZURE_STORAGE_KEY" }}
+  ring:
+    kvstore:
+      store: memberlist
+  compactor_address: loki-backend:3100
+ruler:
+  storage:
+    type: azure
+
+# Should default to false, but for some reason doesn't
+legacy_read_target: false

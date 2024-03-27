@@ -1,0 +1,86 @@
+version: "3"
+
+networks:
+  loki:
+
+# Loki deployed in Simple Scalable mode (see https://grafana.com/docs/loki/latest/get-started/deployment-modes/#simple-scalable)
+
+## How to scale:
+## TODO
+
+services:
+  loki-write:
+    image: grafana/loki:2.9.4
+    ports:
+      - "3100:3100"
+    command: -target=write -config.file=/etc/loki/config.yaml
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - wget --no-verbose --tries=1 --spider http://localhost:3100/ready ||
+          exit 1
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - ./loki.yml:/etc/loki/config.yaml
+    networks:
+      - loki
+      - azurite
+    depends_on:
+      azure-cli:
+        condition: service_completed_successfully
+      azurite:
+        condition: service_started
+      grafana-pencil:
+        condition: service_completed_successfully
+  
+  loki-read:
+    image: grafana/loki:2.9.4
+    ports:
+      - "3101:3100"
+    command: -target=read -config.file=/etc/loki/config.yaml
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - wget --no-verbose --tries=1 --spider http://localhost:3100/ready ||
+          exit 1
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - ./loki.yml:/etc/loki/config.yaml
+    networks:
+      - loki
+      - azurite
+    depends_on:
+      azure-cli:
+        condition: service_completed_successfully
+      azurite:
+        condition: service_started
+      grafana-pencil:
+        condition: service_completed_successfully
+  
+  loki-backend:
+    image: grafana/loki:2.9.4
+    command: -target=backend -config.file=/etc/loki/config.yaml
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - wget --no-verbose --tries=1 --spider http://localhost:3100/ready ||
+          exit 1
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - ./loki.yml:/etc/loki/config.yaml
+    networks:
+      - loki
+      - azurite
+    depends_on:
+      azure-cli:
+        condition: service_completed_successfully
+      azurite:
+        condition: service_started
+      grafana-pencil:
+        condition: service_completed_successfully
